@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "@lucia-auth/adapter-prisma": "^4.0.1",
+    "@prisma/client": "^5.17.0",
+    "@tanstack/react-query": "^5.51.9",
+    "@tanstack/react-query-devtools": "^5.51.9",
+    "@tiptap/extension-placeholder": "^2.5.4",
+    "@tiptap/pm": "^2.5.4",
+    "@tiptap/react": "^2.5.4",
+    "@tiptap/starter-kit": "^2.5.4",
+    "@uploadthing/react": "^6.7.2",
+    "arctic": "^1.9.2",
+    "date-fns": "^3.6.0",
+    "ky": "^1.4.0",
+    "lucia": "^3.2.0",
+    "next-themes": "^0.3.0",
+    "prisma": "^5.17.0",
+    "react-cropper": "^2.3.3",
+    "react-image-file-resizer": "^0.4.8",
+    "react-intersection-observer": "^9.13.0",
+    "react-linkify-it": "^1.0.8",
+    "stream-chat": "^8.37.0",
+    "stream-chat-react": "^11.23.2",
+    "uploadthing": "^6.13.2"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.5"
+  }
+}
