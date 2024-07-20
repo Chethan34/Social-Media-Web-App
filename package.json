@@ -45,8 +45,15 @@
     "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "eslint-config-prettier": "^9.1.0",
+    "node-loader": "^2.0.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "typescript": "^5.5.3"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   }
 }

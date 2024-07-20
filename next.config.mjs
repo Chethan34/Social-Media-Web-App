@@ -1,11 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental:{
+    experimental: {
         staleTimes: {
             dynamic: 30,
         },
     },
-    serverExternalPackages: ["@node-rs/argon2"]
+    webpack: (config) => {
+        config.module.rules.push({
+            test: /\.node$/,
+            use: 'node-loader',
+        });
+
+        return config;
+    }
 };
 
 export default nextConfig;
