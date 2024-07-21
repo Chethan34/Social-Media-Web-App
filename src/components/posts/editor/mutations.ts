@@ -1,3 +1,5 @@
+import { useSession } from "@/app/(main)/SessionProvider";
+import { useToast } from "@/components/ui/use-toast";
 import { PostsPage } from "@/lib/types";
 import {
   InfiniteData,
@@ -5,53 +7,67 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
-import { useToast } from "../ui/use-toast";
-import { deletePost } from "./actions";
+import { submitPost } from "./actions";
 
-export function useDeletePostMutation() {
+export function useSubmitPostMutation() {
   const { toast } = useToast();
 
   const queryClient = useQueryClient();
 
-  const router = useRouter();
-  const pathname = usePathname();
+  const { user } = useSession();
 
   const mutation = useMutation({
-    mutationFn: deletePost,
-    onSuccess: async (deletedPost) => {
-      const queryFilter: QueryFilters = { queryKey: ["post-feed"] };
+    mutationFn: submitPost,
+    onSuccess: async (newPost) => {
+      const queryFilter = {
+        queryKey: ["post-feed"],
+        predicate(query) {
+          return (
+            query.queryKey.includes("for-you") ||
+            (query.queryKey.includes("user-posts") &&
+              query.queryKey.includes(user.id))
+          );
+        },
+      } satisfies QueryFilters;
 
       await queryClient.cancelQueries(queryFilter);
 
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
         queryFilter,
         (oldData) => {
-          if (!oldData) return;
+          const firstPage = oldData?.pages[0];
 
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page) => ({
-              nextCursor: page.nextCursor,
-              posts: page.posts.filter((p) => p.id !== deletedPost.id),
-            })),
-          };
+          if (firstPage) {
+            return {
+              pageParams: oldData.pageParams,
+              pages: [
+                {
+                  posts: [newPost, ...firstPage.posts],
+                  nextCursor: firstPage.nextCursor,
+                },
+                ...oldData.pages.slice(1),
+              ],
+            };
+          }
         },
       );
 
-      toast({
-        description: "Post deleted",
+      queryClient.invalidateQueries({
+        queryKey: queryFilter.queryKey,
+        predicate(query) {
+          return queryFilter.predicate(query) && !query.state.data;
+        },
       });
 
-      if (pathname === `/posts/${deletedPost.id}`) {
-        router.push(`/users/${deletedPost.user.username}`);
-      }
+      toast({
+        description: "Post created",
+      });
     },
     onError(error) {
       console.error(error);
       toast({
         variant: "destructive",
-        description: "Failed to delete post. Please try again.",
+        description: "Failed to post. Please try again.",
       });
     },
   });
