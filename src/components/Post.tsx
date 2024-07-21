@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import Comments from "../comments/Comments";
-import Linkify from "../Linkify";
+import Linkify from "./Linkify";
 import UserAvatar from "../UserAvatar";
 import UserTooltip from "../UserTooltip";
 import BookmarkButton from "./BookmarkButton";
