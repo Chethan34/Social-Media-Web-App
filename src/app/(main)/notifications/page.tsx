@@ -1,6 +1,6 @@
 import TrendsSidebar from "@/components/TrendsSidebar";
 import { Metadata } from "next";
-import Notifications from "./Notitications";
+import Notifications from "./Notifications";
 
 export const metadata: Metadata = {
   title: "Notifications",
