@@ -5,7 +5,17 @@ const nextConfig = {
       dynamic: 30,
     },
   },
-  serverExternalPackages: ["@node-rs/argon2"],
+  webpack: (config, { isServer }) => {
+    // Ignore the @node-rs/argon2 module on both client and server
+    config.externals.push('@node-rs/argon2');
+    
+    // For non-server builds, also ignore the specific platform module
+    if (!isServer) {
+      config.externals.push('@node-rs/argon2-win32-x64-msvc');
+    }
+
+    return config;
+  },
   images: {
     remotePatterns: [
       {
