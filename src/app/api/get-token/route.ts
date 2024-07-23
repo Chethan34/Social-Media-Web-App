@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { validateRequest } from "@/auth";
 import streamServerClient from "@/lib/stream";
 

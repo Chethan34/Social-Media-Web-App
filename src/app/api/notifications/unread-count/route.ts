@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NotificationCountInfo } from "@/lib/types";
