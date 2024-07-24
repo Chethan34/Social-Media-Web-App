@@ -1,6 +1,0 @@
-[build]
-  command = "npm run build && next export"
-  publish = "out"
-
-[build.environment]
-  NEXT_TELEMETRY_DISABLED = "1"

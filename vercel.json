@@ -1,17 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "buildCommand": "npm run build && prisma generate"
-      }
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/clear-uploads",
-      "schedule": "0 2 * * *"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
