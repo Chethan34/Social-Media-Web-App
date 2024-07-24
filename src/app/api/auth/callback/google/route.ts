@@ -15,12 +15,21 @@ export async function GET(req: NextRequest) {
   const storedState = cookies().get("state")?.value;
   const storedCodeVerifier = cookies().get("code_verifier")?.value;
 
-  if (!code || !state || !storedState || !storedCodeVerifier || state !== storedState) {
-    return new Response("Invalid state or code verifier", { status: 400 });
+  if (
+    !code ||
+    !state ||
+    !storedState ||
+    !storedCodeVerifier ||
+    state !== storedState
+  ) {
+    return new Response(null, { status: 400 });
   }
 
   try {
-    const tokens = await google.validateAuthorizationCode(code, storedCodeVerifier);
+    const tokens = await google.validateAuthorizationCode(
+      code,
+      storedCodeVerifier,
+    );
 
     const googleUser = await kyInstance
       .get("https://www.googleapis.com/oauth2/v1/userinfo", {
@@ -39,7 +48,11 @@ export async function GET(req: NextRequest) {
     if (existingUser) {
       const session = await lucia.createSession(existingUser.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+      cookies().set(
+        sessionCookie.name,
+        sessionCookie.value,
+        sessionCookie.attributes,
+      );
       return new Response(null, {
         status: 302,
         headers: {
@@ -49,6 +62,7 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = generateIdFromEntropySize(10);
+
     const username = slugify(googleUser.name) + "-" + userId.slice(0, 4);
 
     await prisma.$transaction(async (tx) => {
@@ -69,7 +83,11 @@ export async function GET(req: NextRequest) {
 
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+    cookies().set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes,
+    );
 
     return new Response(null, {
       status: 302,
@@ -78,10 +96,14 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error during Google OAuth callback:", error);
+    console.error(error);
     if (error instanceof OAuth2RequestError) {
-      return new Response("OAuth2 request error", { status: 400 });
+      return new Response(null, {
+        status: 400,
+      });
     }
-    return new Response("Internal server error", { status: 500 });
+    return new Response(null, {
+      status: 500,
+    });
   }
 }

@@ -1,21 +1,12 @@
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { Google } from "arctic";
 import { Lucia, Session, User } from "lucia";
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { cache } from "react";
+import prisma from "./lib/prisma";
 
-// Initialize the Prisma adapter
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
-// Initialize the Google OAuth provider with the correct redirect URI
-export const google = new Google(
-  process.env.GOOGLE_CLIENT_ID!,
-  process.env.GOOGLE_CLIENT_SECRET!,
-  `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`
-);
-
-// Initialize Lucia with the Prisma adapter
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
     expires: false,
@@ -34,7 +25,13 @@ export const lucia = new Lucia(adapter, {
   },
 });
 
-// Define the user attributes interface
+declare module "lucia" {
+  interface Register {
+    Lucia: typeof lucia;
+    DatabaseUserAttributes: DatabaseUserAttributes;
+  }
+}
+
 interface DatabaseUserAttributes {
   id: string;
   username: string;
@@ -43,15 +40,12 @@ interface DatabaseUserAttributes {
   googleId: string | null;
 }
 
-// Declare the module augmentation for Lucia
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseUserAttributes: DatabaseUserAttributes;
-  }
-}
+export const google = new Google(
+  process.env.GOOGLE_CLIENT_ID!,
+  process.env.GOOGLE_CLIENT_SECRET!,
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`,
+);
 
-// Validate the request and session
 export const validateRequest = cache(
   async (): Promise<
     { user: User; session: Session } | { user: null; session: null }
@@ -73,7 +67,7 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
       if (!result.session) {
@@ -81,11 +75,11 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
     } catch {}
 
     return result;
-  }
+  },
 );
