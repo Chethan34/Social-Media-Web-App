@@ -8,7 +8,7 @@ import { cache } from "react";
 // Initialize the Prisma adapter
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
-// Initialize the Google OAuth provider with correct redirect URI
+// Initialize the Google OAuth provider with the correct redirect URI
 export const google = new Google(
   process.env.GOOGLE_CLIENT_ID!,
   process.env.GOOGLE_CLIENT_SECRET!,
