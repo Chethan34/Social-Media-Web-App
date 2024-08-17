@@ -19,6 +19,7 @@
     "@tiptap/starter-kit": "^2.5.4",
     "@uploadthing/react": "^6.7.2",
     "arctic": "^1.9.2",
+    "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
